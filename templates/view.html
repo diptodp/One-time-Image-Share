@@ -297,10 +297,10 @@
     <div class="container">
         <h1>Secure Image View</h1>
         
-        <!-- <div class="warning-box">
+        <div class="warning-box">
             <i class="fas fa-exclamation-triangle warning-icon"></i>
             <p class="warning-text">This is a one-time viewing. The image will not be accessible once you leave or refresh this page.</p>
-        </div> -->
+        </div>
 
         {% if question %}
             <form method="POST" enctype="multipart/form-data" id="viewImageForm">
@@ -388,11 +388,11 @@
         }
 
         // Warn before leaving page
-        window.addEventListener('beforeunload', (e) => {
-            e.preventDefault();
-            e.returnValue = '';
-            return '';
-        });
+        // window.addEventListener('beforeunload', (e) => {
+        //     e.preventDefault();
+        //     e.returnValue = '';
+        //     return '';
+        // });
 
         // Handle orientation changes
         window.addEventListener('orientationchange', () => {
