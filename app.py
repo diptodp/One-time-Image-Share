@@ -1,7 +1,6 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from cryptography.fernet import Fernet
-import os
 
 db = SQLAlchemy()
 
@@ -24,6 +23,8 @@ def create_app():
 
     return app
 
+# Create the app instance for Gunicorn
+app = create_app()
+
 if __name__ == "__main__":
-    app = create_app()
     app.run(debug=True)
