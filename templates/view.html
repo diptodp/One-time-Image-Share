@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Secure Image View</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --warning-color: #ef4444;
+            --background: #f8fafc;
+            --card-bg: #ffffff;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --border-radius: clamp(12px, 2vw, 16px);
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+            --container-padding: clamp(1rem, 3vw, 2rem);
+            --content-width: min(95%, 800px);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+            background: var(--background);
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            min-height: 100vh;
+            min-height: -webkit-fill-available; /* iOS height fix */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: var(--container-padding);
+            color: var(--text-primary);
+            overflow-x: hidden;
+        }
+
+        /* iOS Safari height fix */
+        html {
+            height: -webkit-fill-available;
+        }
+
+        .container {
+            width: var(--content-width);
+            max-width: 800px;
+            text-align: center;
+            margin: auto;
+        }
+
+        h1 {
+            font-size: clamp(1.5rem, 5vw, 2.5rem);
+            font-weight: 700;
+            margin-top: 40px;
+            margin-bottom: clamp(0.8rem, 2vw, 1rem);
+            background: linear-gradient(135deg, var(--text-primary) 0%, var(--primary-color) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            line-height: 1.2;
+            padding: 0 1rem;
+        }
+
+        .warning-box {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: clamp(0.5rem, 2vw, 0.75rem);
+            background-color: rgba(239, 68, 68, 0.1);
+            border-radius: var(--border-radius);
+            padding: clamp(0.8rem, 2vw, 1rem);
+            margin-bottom: clamp(1.5rem, 4vw, 2rem);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            flex-wrap: wrap;
+        }
+
+        .warning-icon {
+            color: var(--warning-color);
+            font-size: clamp(1rem, 3vw, 1.25rem);
+            flex-shrink: 0;
+        }
+
+        .warning-text {
+            color: rgb(100, 117, 139);
+            font-size: clamp(0.875rem, 2.5vw, 1rem);
+            line-height: 1.5;
+            max-width: 600px;
+        }
+
+        .image-container {
+            background-color: var(--card-bg);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            padding: clamp(1rem, 3vw, 1.5rem);
+            position: relative;
+            overflow: hidden;
+            transition: var(--transition);
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .image-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-color), #3b82f6);
+        }
+
+        .image-wrapper {
+            position: relative;
+            border-radius: calc(var(--border-radius) - 4px);
+            overflow: hidden;
+            background-color: var(--background);
+            width: 100%;
+            max-height: 70vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            max-height: 70vh;
+            object-fit: contain;
+            border-radius: calc(var(--border-radius) - 4px);
+            transition: var(--transition);
+            display: block;
+        }
+
+        .security-notice {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-top: clamp(1rem, 3vw, 1.5rem);
+            color: var(--text-secondary);
+            font-size: clamp(0.75rem, 2vw, 0.875rem);
+            flex-wrap: wrap;
+        }
+
+        .security-icon {
+            color: var(--primary-color);
+            font-size: clamp(0.875rem, 2.5vw, 1rem);
+        }
+
+        /* Landscape orientation fixes */
+        @media (max-height: 500px) and (orientation: landscape) {
+            body {
+                padding: 0.5rem;
+            }
+
+            .container {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 1rem;
+                align-items: center;
+            }
+
+            h1 {
+                grid-column: 1 / -1;
+                margin-bottom: 0.5rem;
+            }
+
+            .warning-box {
+                margin-bottom: 0;
+            }
+
+            .image-wrapper {
+                max-height: 80vh;
+            }
+        }
+
+        /* Portrait phone */
+        @media (max-width: 480px) {
+            .container {
+                width: 100%;
+            }
+
+            .warning-box {
+                flex-direction: column;
+                text-align: center;
+                padding: 0.75rem;
+            }
+
+            .image-container {
+                padding: 0.75rem;
+            }
+
+            .security-notice {
+                flex-direction: column;
+                gap: 0.25rem;
+            }
+        }
+
+        /* Tablets */
+        @media (min-width: 481px) and (max-width: 768px) {
+            .container {
+                width: 90%;
+            }
+        }
+
+        /* Larger screens */
+        @media (min-width: 1024px) {
+            .container {
+                max-width: 1000px;
+            }
+        }
+
+        /* High DPI screens */
+        @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+            .image-container {
+                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+            }
+        }
+
+        /* Dark mode support */
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --background: #0f172a;
+                --card-bg: #1e293b;
+                --text-primary: #f8fafc;
+                --text-secondary: #cbd5e1;
+            }
+        }
+
+        /* Protect against showing partial content during transitions */
+        .hidden {
+            display: none !important;
+        }
+
+        /* Print media handling */
+        @media print {
+            body * {
+                display: none !important;
+            }
+            body:after {
+                content: "Printing is not allowed";
+                display: block !important;
+                text-align: center;
+                padding: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Secure Image View</h1>
+        
+        <div class="warning-box">
+            <i class="fas fa-exclamation-triangle warning-icon"></i>
+            <p class="warning-text">This is a one-time viewing. The image will not be accessible once you leave or refresh this page.</p>
+        </div>
+        
+        <div id="image-container" class="image-container">
+            <div class="image-wrapper">
+                <img src="data:image/png;base64,{{ image_data }}" alt="Secure Image" />
+            </div>
+            <div class="security-notice">
+                <i class="fas fa-shield-alt security-icon"></i>
+                <span>Protected viewing mode enabled</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const imageContainer = document.getElementById('image-container');
+        
+        // Enhanced security features with device-specific handling
+        function secureHideImage() {
+            imageContainer.classList.add('hidden');
+            // Clear the image source as an additional security measure
+            document.querySelector('img').src = '';
+        }
+
+        // Visibility change detection
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                secureHideImage();
+            }
+        });
+
+        // Window blur detection
+        window.addEventListener('blur', secureHideImage);
+
+        // Prevent screenshots (where supported)
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'PrintScreen' || 
+                (e.ctrlKey && (e.key === 'p' || e.key === 'P' || e.key === 's' || e.key === 'S')) || 
+                (e.metaKey && (e.key === 'p' || e.key === 'P' || e.key === 's' || e.key === 'S'))) {
+                e.preventDefault();
+                alert('Screenshots are not permitted for security reasons.');
+            }
+        });
+
+        // Mobile-specific touch handlers
+        document.addEventListener('touchstart', (e) => {
+            if (e.touches.length > 1) {
+                e.preventDefault(); // Prevent pinch zoom
+            }
+        }, { passive: false });
+
+        // Disable right-click menu
+        document.addEventListener('contextmenu', (e) => {
+            e.preventDefault();
+            return false;
+        });
+
+        // Prevent image dragging
+        document.addEventListener('dragstart', (e) => {
+            e.preventDefault();
+            return false;
+        });
+
+        // Additional protection against copy attempts
+        document.addEventListener('copy', (e) => {
+            e.preventDefault();
+            return false;
+        });
+
+        // Handle page visibility on mobile devices
+        if ('hidden' in document) {
+            document.addEventListener('visibilitychange', () => {
+                if (document.hidden) {
+                    secureHideImage();
+                }
+            });
+        }
+
+        // Warn before leaving page
+        window.addEventListener('beforeunload', (e) => {
+            e.preventDefault();
+            e.returnValue = '';
+            return '';
+        });
+
+        // Handle orientation changes
+        window.addEventListener('orientationchange', () => {
+            // Small delay to allow orientation to complete
+            setTimeout(() => {
+                document.body.style.height = window.innerHeight + 'px';
+            }, 100);
+        });
+
+        // Initial height set for mobile
+        document.body.style.height = window.innerHeight + 'px';
+    </script>
+</body>
+</html>

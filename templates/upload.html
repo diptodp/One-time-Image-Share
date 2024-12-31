@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Professional Image Upload</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --primary-dark: #1d4ed8;
+            --secondary-color: #64748b;
+            --success-color: #059669;
+            --background-color: #f8fafc;
+            --card-background: #ffffff;
+            --text-primary: #1e293b;
+            --text-secondary: #475569;
+            --border-radius: 12px;
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: grid;
+            place-items: center;
+            padding: 1rem;
+        }
+
+        .container {
+            background-color: var(--card-background);
+            border-radius: var(--border-radius);
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            width: min(95%, 1200px);
+            padding: 2rem;
+            display: grid;
+            gap: 2rem;
+            grid-template-columns: repeat(auto-fit, minmax(min(100%, 500px), 1fr));
+        }
+
+        .section {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        h1 {
+            font-size: clamp(1.5rem, 5vw, 2rem);
+            color: var(--text-primary);
+            font-weight: 700;
+            line-height: 1.2;
+        }
+
+        .upload-area {
+            border: 2px dashed var(--secondary-color);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            text-align: center;
+            transition: var(--transition);
+            background-color: var(--background-color);
+            cursor: pointer;
+        }
+
+        .upload-area:hover {
+            border-color: var(--primary-color);
+            background-color: #f1f5f9;
+        }
+
+        .upload-icon {
+            font-size: 2.5rem;
+            color: var(--secondary-color);
+            margin-bottom: 1rem;
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .upload-text {
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+        }
+
+        .button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius);
+            padding: 0.75rem 1.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            font-size: 1rem;
+        }
+
+        .button:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        .preview-box {
+            background-color: var(--background-color);
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .preview-box img {
+            max-width: 200px;  /* Changed from 100% to 200px */
+            max-height: 200px; /* Added max-height */
+            width: auto;       /* Added width: auto */
+            height: auto;
+            object-fit: contain; /* Added object-fit */
+            border-radius: calc(var(--border-radius) - 4px);
+            box-shadow: 0 2px 4px rgb(0 0 0 / 0.1);
+            display: block;    /* Added display: block */
+            margin: 0 auto;    /* Center the image */
+        }
+
+        .link-container {
+            background-color: var(--background-color);
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+        }
+
+        .link-box {
+            background-color: white;
+            border: 1px solid #e2e8f0;
+            border-radius: calc(var(--border-radius) - 4px);
+            padding: 0.75rem;
+            margin: 1rem 0;
+            word-break: break-all;
+        }
+
+        .copy-button {
+            background-color: var(--success-color);
+        }
+
+        .success-message {
+            color: var(--success-color);
+            font-size: 0.875rem;
+            margin-top: 0.5rem;
+            opacity: 0;
+            transition: var(--transition);
+        }
+
+        .success-message.visible {
+            opacity: 1;
+        }
+
+        @media (max-width: 640px) {
+            .container {
+                padding: 1rem;
+                gap: 1.5rem;
+            }
+
+            .upload-area {
+                padding: 1.5rem;
+            }
+
+            .button {
+                width: 100%;
+            }
+
+            .preview-box img {
+                max-width: 150px;  /* Slightly smaller on mobile */
+                max-height: 150px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="section">
+            <h1>Upload Your Image</h1>
+            <form method="POST" enctype="multipart/form-data" id="uploadForm">
+                <div class="upload-area" id="dropZone">
+                    <i class="fas fa-cloud-upload-alt upload-icon"></i>
+                    <p class="upload-text">Drag and drop your image here or</p>
+                    <input type="file" name="image" id="fileInput" class="file-input" accept="image/*" required>
+                    <button type="button" class="button" onclick="document.getElementById('fileInput').click()">
+                        <i class="fas fa-plus"></i>
+                        Choose File
+                    </button>
+                </div>
+                <div id="fileName" class="upload-text" style="margin-top: 1rem;"></div>
+                <button type="submit" class="button" style="margin-top: 1rem; width: 100%;">
+                    <i class="fas fa-upload"></i>
+                    Upload Image
+                </button>
+            </form>
+
+            {% if image_preview %}
+            <div class="preview-box">
+                <h2>Preview</h2>
+                <img src="{{ image_preview }}" alt="Image Preview">
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="section">
+            {% if link %}
+            <div class="link-container">
+                <h2>Your One-Time Image Link</h2>
+                <div class="link-box">
+                    <a href="{{ link }}" target="_blank" style="color: var(--primary-color); text-decoration: none;">
+                        {{ link }}
+                    </a>
+                </div>
+                <button class="button copy-button" id="copyButton" onclick="copyLink()">
+                    <i class="fas fa-copy"></i>
+                    Copy Link
+                </button>
+                <div class="success-message" id="successMessage">Link copied to clipboard!</div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <script>
+        const dropZone = document.getElementById('dropZone');
+        const fileInput = document.getElementById('fileInput');
+        const fileName = document.getElementById('fileName');
+
+        // Drag and drop functionality
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.style.borderColor = 'var(--primary-color)';
+            dropZone.style.backgroundColor = '#f1f5f9';
+        });
+
+        dropZone.addEventListener('dragleave', (e) => {
+            e.preventDefault();
+            dropZone.style.borderColor = 'var(--secondary-color)';
+            dropZone.style.backgroundColor = 'var(--background-color)';
+        });
+
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.style.borderColor = 'var(--secondary-color)';
+            dropZone.style.backgroundColor = 'var(--background-color)';
+            
+            const files = e.dataTransfer.files;
+            if (files.length) {
+                fileInput.files = files;
+                updateFileName(files[0]);
+            }
+        });
+
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length) {
+                updateFileName(e.target.files[0]);
+            }
+        });
+
+        function updateFileName(file) {
+            fileName.textContent = `Selected file: ${file.name}`;
+        }
+
+        function copyLink() {
+            const linkText = document.querySelector('.link-box a').textContent;
+            navigator.clipboard.writeText(linkText)
+                .then(() => {
+                    const copyButton = document.getElementById('copyButton');
+                    const successMessage = document.getElementById('successMessage');
+                    
+                    copyButton.innerHTML = '<i class="fas fa-check"></i> Copied!';
+                    successMessage.classList.add('visible');
+                    
+                    setTimeout(() => {
+                        copyButton.innerHTML = '<i class="fas fa-copy"></i> Copy Link';
+                        successMessage.classList.remove('visible');
+                    }, 3000);
+                })
+                .catch(err => {
+                    alert('Failed to copy link: ' + err);
+                });
+        }
+    </script>
+</body>
+</html>
