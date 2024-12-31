@@ -270,16 +270,26 @@
             <i class="fas fa-exclamation-triangle warning-icon"></i>
             <p class="warning-text">This is a one-time viewing. The image will not be accessible once you leave or refresh this page.</p>
         </div>
-        
-        <div id="image-container" class="image-container">
-            <div class="image-wrapper">
-                <img src="data:image/png;base64,{{ image_data }}" alt="Secure Image" />
+
+        {% if question %}
+            <form method="POST" enctype="multipart/form-data" id="viewImageForm">
+                <button type="submit" class="button" style="margin-top: 1rem; width: 100%;">
+                    Click to proceed!
+                </button>
+            </form>
+        {% endif %}
+
+        {% if not question %}
+            <div id="image-container" class="image-container">
+                <div class="image-wrapper">
+                    <img src="data:image/png;base64,{{ image_data }}" alt="Secure Image" />
+                </div>
+                <div class="security-notice">
+                    <i class="fas fa-shield-alt security-icon"></i>
+                    <span>Protected viewing mode enabled</span>
+                </div>
             </div>
-            <div class="security-notice">
-                <i class="fas fa-shield-alt security-icon"></i>
-                <span>Protected viewing mode enabled</span>
-            </div>
-        </div>
+        {% endif %}
     </div>
 
     <script>

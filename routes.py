@@ -49,22 +49,26 @@ def init_routes(app):
 
         return render_template('upload.html', image_preview=image_preview, link=link)
 
-    @app.route('/view/<image_id>')
+    @app.route('/view/<image_id>', methods=['GET', 'POST'])
     def view_image(image_id):
-        image = Image.query.get(image_id)
-        if not image:
-            abort(404)
 
-        try:
-            # Decrypt image
-            decrypted_data = app.fernet.decrypt(image.data)
-            db.session.delete(image)  # Delete the image after one-time view
-            db.session.commit()
+        if request.method == 'POST':
+            image = Image.query.get(image_id)
+            if not image:
+                abort(404)
 
-            # Convert image bytes to base64
-            img_base64 = base64.b64encode(decrypted_data).decode('utf-8')
+            try:
+                # Decrypt image
+                decrypted_data = app.fernet.decrypt(image.data)
+                db.session.delete(image)  # Delete the image after one-time view
+                db.session.commit()
 
-            return render_template('view.html', image_data=img_base64)
-        except Exception as e:
-            flash(f"Error occurred while decrypting the image: {str(e)}")
-            return redirect(url_for('upload_image'))
+                # Convert image bytes to base64
+                img_base64 = base64.b64encode(decrypted_data).decode('utf-8')
+
+                return render_template('view.html', image_data=img_base64, question=False)
+            except Exception as e:
+                flash(f"Error occurred while decrypting the image: {str(e)}")
+                return redirect(url_for('upload_image'))
+
+        return render_template('view.html', image_id=image_id, question=True)
